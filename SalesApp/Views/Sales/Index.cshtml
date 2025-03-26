@@ -1,0 +1,128 @@
+@model List<SalesApp.Models.SalesTransaction>
+
+@{
+    ViewData["Title"] = "SalesApp";
+}
+
+<div class="wrapper">
+    <nav id="sidebar" class="bg-dark text-white">
+      <div class="sidebar-header">
+        <h3>Sales Dashboard</h3>
+      </div>
+      <ul class="list-unstyled components">
+        <li>
+          <a href="#" id="salesLink" class="nav-link active">
+            <i class="bi bi-cart"></i> Sales
+          </a>
+        </li>
+        <li>
+          <a href="#" id="invoiceLink" class="nav-link">
+            <i class="bi bi-receipt"></i> Invoices
+          </a>
+        </li>
+      </ul>
+    </nav>
+  
+  <div id="content">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <button type="button" id="sidebarCollapse" class="btn btn-dark">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+    </nav>
+  
+    <div class="container-fluid mt-4">
+      <div id="salesPage">
+        <div class="d-flex justify-content-between mb-3">
+          <h2>Sales Transactions</h2>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#transactionModal">Add Transaction</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>Product</th>
+              <th>Customer</th>
+              <th>Quantity</th>
+              <th>Rate</th>
+              <th>Total</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            @* <tbody id="salesTable"></tbody> *@
+            <tbody>
+              @foreach (var sales in Model)
+              {
+                <tr>
+                <td>@sales.Product?.ProductName</td>
+                <td>@sales.Customer?.CustomerName</td>
+                <td>@sales.Quantity</td>
+                <td>@sales.Rate</td>
+                <td>@sales.Total</td>
+                <td>
+                  <button class="btn btn-sm btn-primary">Generate Invoice</button>
+                </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+  
+      <div id="invoicePage" style="display: none;">
+        <h2>Invoices</h2>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Total</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="invoiceTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  
+  <!-- Transaction Modal -->
+  <div class="modal fade" id="transactionModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Transaction</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="transactionForm">
+            <div class="mb-3">
+              <label class="form-label">Product</label>
+              <input type="text" class="form-control" id="product" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Customer</label>
+              <input type="text" class="form-control" id="customer" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Quantity</label>
+              <input type="number" class="form-control" id="quantity" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Rate</label>
+              <input type="number" class="form-control" id="rate" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="#">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
