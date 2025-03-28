@@ -6,7 +6,8 @@ document.getElementById('salesLink').addEventListener('click', showSalesPage);
 document.getElementById('productLink').addEventListener('click', showProductPage);
 document.getElementById('customerLink').addEventListener('click', showCustomerPage);
 document.getElementById('invoiceLink').addEventListener('click', showInvoicePage);
-document.getElementById('saveTransaction').addEventListener('click', saveTransaction);
+document.getElementById('saveProduct').addEventListener('click', saveProduct);
+
 document.getElementById('sidebarCollapse').addEventListener('click', function() {
   document.getElementById('sidebar').classList.toggle('active');
 });
@@ -59,3 +60,9 @@ function showInvoicePage() {
   document.getElementById('invoiceLink').classList.add('active');
 }
 
+function saveProduct() {
+  console.log("product save clicked");
+  document.getElementById('productCreateForm').submit();
+  bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+  document.getElementById('transactionForm').reset();
+}
