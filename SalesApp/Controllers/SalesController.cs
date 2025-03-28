@@ -24,6 +24,36 @@ public class SalesController : Controller
                 .Include(s => s.Product)
                 .Include(c=>c.Customer)
                 .ToListAsync();
-        return View(salesTransactions); 
-    } 
+        
+        var customers = await _context.Customers.ToListAsync();
+        var products = await _context.Products.ToListAsync();
+        var invoices = await _context.Invoices.ToListAsync();
+
+        var viewModel = new SalesViewModel
+        {
+            SalesTransactions = salesTransactions,
+            Customers = customers,
+            Products = products,
+            Invoices = invoices
+        };
+        
+        return View(viewModel); 
+    }
+
+    public IActionResult CreateProduct()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateProduct([Bind ("productName", "productRate")] Product product)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.Add(product);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        return View();
+    }
 } 

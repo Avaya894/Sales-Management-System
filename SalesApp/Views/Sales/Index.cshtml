@@ -1,5 +1,6 @@
-@model List<SalesApp.Models.SalesTransaction>
+@* @model List<SalesApp.Models.SalesTransaction> *@
 
+@model SalesViewModel
 @{
     ViewData["Title"] = "SalesApp";
 }
@@ -12,7 +13,17 @@
       <ul class="list-unstyled components">
         <li>
           <a href="#" id="salesLink" class="nav-link active">
-            <i class="bi bi-cart"></i> Sales
+            <i class="bi bi-cart"></i> Sales Transactions
+          </a>
+        </li>
+        <li>
+          <a href="#" id="productLink" class="nav-link">
+            <i class="bi bi-receipt"></i> Product
+          </a>
+        </li>
+        <li>
+          <a href="#" id="customerLink" class="nav-link">
+            <i class="bi bi-receipt"></i> Customer
           </a>
         </li>
         <li>
@@ -32,6 +43,8 @@
       </div>
     </nav>
   
+    <!-- Pages (Sales, Product, Customers, Invoice) -->
+    
     <div class="container-fluid mt-4">
       <div id="salesPage">
         <div class="d-flex justify-content-between mb-3">
@@ -47,29 +60,103 @@
               <th>Quantity</th>
               <th>Rate</th>
               <th>Total</th>
+              <th>Invoice</th>
               <th>Actions</th>
             </tr>
             </thead>
             @* <tbody id="salesTable"></tbody> *@
             <tbody>
-              @foreach (var sales in Model)
-              {
-                <tr>
+            @foreach (var sales in Model.SalesTransactions)
+            {
+              <tr>
                 <td>@sales.Product?.ProductName</td>
                 <td>@sales.Customer?.CustomerName</td>
                 <td>@sales.Quantity</td>
                 <td>@sales.Rate</td>
                 <td>@sales.Total</td>
+                <td>@(sales.InvoiceId != null ? sales.InvoiceId : "-")</td>
                 <td>
                   <button class="btn btn-sm btn-primary">Generate Invoice</button>
                 </td>
-                </tr>
-              }
+              </tr>
+            }
             </tbody>
           </table>
         </div>
       </div>
+
+      <div id="productPage" style="display: none;">
+        <div class="d-flex justify-content-between mb-3">
+          <h2>Product</h2>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal">Add Product</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>ProductId</th>
+              <th>ProductName</th>
+              <th>Rate</th>
+            </tr>
+            </thead>
+            
+            <tbody>
+            @foreach (var product in Model.Products)
+            {
+              <tr>
+                <td>@product.ProductName</td>
+                <td>@product.ProductName</td>
+                <td>@product.Rate</td>
+                @* <td>@sales.Rate</td> *@
+                @* <td>@sales.Total</td> *@
+                @* <td>@(sales.InvoiceId != null ? sales.InvoiceId : "-")</td> *@
+                @* <td> *@
+                @*   <button class="btn btn-sm btn-primary">Generate Invoice</button> *@
+                @* </td> *@
+              </tr>
+            }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="customerPage" style="display: none;">
+        <div class="d-flex justify-content-between mb-3">
+          <h2>Customers</h2>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerModal">Add Customer</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>CustomerID</th>
+              <th>CustomerName</th>
+              <th>ContactInfo</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @foreach (var customer in Model.Customers)
+            {
+              <tr>
+                <td>@customer.CustomerId</td>
+                <td>@customer.CustomerName</td>
+                <td>@customer.ContactInfo</td>
+                @* <td>@sales.Rate</td> *@
+                @* <td>@sales.Total</td> *@
+                @* <td>@(sales.InvoiceId != null ? sales.InvoiceId : "-")</td> *@
+                @* <td> *@
+                @*   <button class="btn btn-sm btn-primary">Generate Invoice</button> *@
+                @* </td> *@
+              </tr>
+            }
+            </tbody>
+          </table>
+        </div>
   
+      
+      </div>
+
       <div id="invoicePage" style="display: none;">
         <h2>Invoices</h2>
         <div class="table-responsive">
@@ -83,46 +170,122 @@
               <th>Actions</th>
             </tr>
             </thead>
-            <tbody id="invoiceTable"></tbody>
+            <tbody>
+            @foreach (var invoice in Model.Invoices)
+            {
+              <tr>
+                <td>@invoice.InvoiceId</td>
+                <td>@invoice.InvoiceDate</td>
+                <td>@invoice.InvoiceNumber</td>
+                <td>@invoice.InvoiceTotal</td>
+                @* <td>@sales.Rate</td> *@
+                @* <td>@sales.Total</td> *@
+                @* <td>@(sales.InvoiceId != null ? sales.InvoiceId : "-")</td> *@
+                @* <td> *@
+                @*   <button class="btn btn-sm btn-primary">Generate Invoice</button> *@
+                @* </td> *@
+              </tr>
+            }
+            </tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
-  </div>
   
-  <!-- Transaction Modal -->
-  <div class="modal fade" id="transactionModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Add Transaction</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="transactionForm">
-            <div class="mb-3">
-              <label class="form-label">Product</label>
-              <input type="text" class="form-control" id="product" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Customer</label>
-              <input type="text" class="form-control" id="customer" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Quantity</label>
-              <input type="number" class="form-control" id="quantity" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Rate</label>
-              <input type="number" class="form-control" id="rate" required>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="#">Save</button>
-        </div>
+  
+   <!-- Add SalesTransactions, Product, Customers  -->
+
+<div class="modal fade" id="transactionModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Transaction</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="transactionForm">
+          <div class="mb-3">
+            <label class="form-label">Product</label>
+            <input type="text" class="form-control" id="product" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Customer</label>
+            <input type="text" class="form-control" id="customer" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="quantity" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Rate</label>
+            <input type="number" class="form-control" id="rate" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="#">Save</button>
       </div>
     </div>
   </div>
+</div>
+
+<div class="modal fade" id="productModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="transactionForm">
+          <div class="mb-3">
+            <label class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="product" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Rate</label>
+            <input type="number" class="form-control" id="rate" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="#">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="customerModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Customer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="transactionForm">
+          <div class="mb-3">
+            <label class="form-label">Customer Name</label>
+            <input type="text" class="form-control" id="product" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Contact Info</label>
+            <input type="number" class="form-control" id="rate" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="#">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
