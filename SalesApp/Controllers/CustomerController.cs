@@ -4,25 +4,28 @@ using SalesApp.Models;
 
 namespace SalesApp.Controllers;
 
-public class ProductController : Controller
+public class CustomerController : Controller
 {
     // GET
     private readonly SalesContext _context;
     
-    public ProductController(SalesContext context)
+    public CustomerController(SalesContext context)
     {
         _context = context;
     }
+
+    public IActionResult Index()
+    {
+        return Content("Index");
+    }
     
     [HttpPost]
-    public async Task<IActionResult> Create([Bind("ProductName, Rate")]Product product)
+    public async Task<IActionResult> Create([Bind("CustomerName, ContactInfo")] Customer customer)
     {
         if (ModelState.IsValid)
         {
-            Console.Write("Create product pressed");
-            _context.Products.Add(product);
+            _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
-            TempData["Message"] = "Product created successfully!";
         }
         return RedirectToAction("Index", "Sales");
     }

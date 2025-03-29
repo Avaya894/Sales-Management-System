@@ -204,28 +204,40 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <form id="transactionForm">
+        <form asp-controller="Sales" asp-action="Create" method="post" id="transactionForm">
           <div class="mb-3">
             <label class="form-label">Product</label>
-            <input type="text" class="form-control" id="product" required>
+            <select class="form-control custom-select" id="transactionProductName" name="ProductId" required>
+              <option value="">Select Product</option>
+              @foreach (var product in Model.Products)
+              {
+                <option value="@product.ProductId" data-rate="@product.Rate">@product.ProductName</option>
+              }
+            </select>
           </div>
           <div class="mb-3">
             <label class="form-label">Customer</label>
-            <input type="text" class="form-control" id="customer" required>
+            <select class="form-control custom-select" id="customer" name="CustomerId" required>
+              <option value="">Select Customer</option>
+              @foreach (var customer in Model.Customers)
+              {
+                <option value="@customer.CustomerId">@customer.CustomerName</option>
+              }
+            </select>
           </div>
           <div class="mb-3">
             <label class="form-label">Quantity</label>
-            <input type="number" class="form-control" id="quantity" required>
+            <input type="number" class="form-control" id="quantity" value="1" name="Quantity" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Rate</label>
-            <input type="number" class="form-control" id="rate" required>
+            <input type="number" class="form-control" id="transactionProductRate" name="Rate" required>
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="#">Save</button>
+        <button type="button" class="btn btn-primary" id="saveSalesTransaction">Save</button>
       </div>
     </div>
   </div>
@@ -259,31 +271,31 @@
 </div>
 
 <div class="modal fade" id="customerModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add Customer</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <form id="transactionForm">
-          <div class="mb-3">
-            <label class="form-label">Customer Name</label>
-            <input type="text" class="form-control" id="product" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Contact Info</label>
-            <input type="number" class="form-control" id="rate" required>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="#">Save</button>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Customer</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form asp-controller="Customer" asp-action="Create" method="post" id="customerCreateForm">
+            <div class="mb-3">
+              <label class="form-label" for="productName">Customer Name</label>
+              <input type="text" class="form-control" id="customerName" name="CustomerName" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="productRate">Customer Info</label>
+              <input type="text" class="form-control" id="customerInfo" name="ContactInfo" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" id="saveCustomer">Save</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 </div>
 

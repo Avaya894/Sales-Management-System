@@ -17,9 +17,6 @@ public class SalesController : Controller
 
     public async Task<IActionResult> Index()
     { 
-        // var products = await  _context.Products.ToListAsync(); 
-        // var salesTransactions = await  _context.SalesTransactions.ToListAsync(); 
-        // return View(products); 
         var salesTransactions = await _context.SalesTransactions
                 .Include(s => s.Product)
                 .Include(c=>c.Customer)
@@ -39,21 +36,19 @@ public class SalesController : Controller
         
         return View(viewModel); 
     }
-
-    public IActionResult CreateProduct()
-    {
-        return View();
-    }
-
+    
     [HttpPost]
-    public async Task<IActionResult> CreateProduct([Bind ("productName", "productRate")] Product product)
+    public async Task<IActionResult> Create([Bind("ProductId, CustomerId, Quantity, Rate")]SalesTransaction salesTransaction)
     {
         if (ModelState.IsValid)
         {
-            _context.Add(product);
+            Console.WriteLine($"ProductId: {salesTransaction.ProductId}, CustomerId: {salesTransaction.CustomerId}, Quantity: {salesTransaction.Quantity}, Rate: {salesTransaction.Rate}");
+            Console.Write("Create saleTransaction pressed");
+            _context.SalesTransactions.Add(salesTransaction);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            TempData["Message"] = "Sales created successfully!";
         }
-        return View();
+        return RedirectToAction("Index", "Sales");
     }
+    
 } 
