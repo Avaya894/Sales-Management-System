@@ -30,6 +30,11 @@ public class SalesTransaction
     [Range(0, double.MaxValue)]
     public decimal Total { get; set; }
 
+    [Required]
+    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+
+    public DateTime? EditedDate { get; set; }
+    
     // Foreign key to Invoice (nullable)
     [ForeignKey("Invoice")]
     public int? InvoiceId { get; set; }

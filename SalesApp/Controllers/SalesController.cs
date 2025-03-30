@@ -83,6 +83,4 @@ public class SalesController : Controller
         }
         return RedirectToAction("Index", "Sales");
     }
-    
-    
 } 

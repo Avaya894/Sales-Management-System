@@ -168,13 +168,17 @@
 
       <div id="invoicePage" style="display: none;">
         <h2>Invoices</h2>
+        <form asp-controller="Invoice" asp-action="GenerateAndTagInvoices" method="post">
+          <button type="submit" class="btn btn-primary">Generate Daily Invoices</button>
+        </form>
+
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
             <tr>
-              <th>Invoice #</th>
+              <th>InvoiceNo.</th>
+              <th>Invoice Date</th>
               <th>Customer</th>
-              <th>Date</th>
               <th>Total</th>
               <th>Actions</th>
             </tr>
@@ -183,16 +187,22 @@
             @foreach (var invoice in Model.Invoices)
             {
               <tr>
-                <td>@invoice.InvoiceId</td>
+                <td>@invoice.InvoiceNumber</td>
                 <td>@invoice.InvoiceDate</td>
                 <td>@invoice.InvoiceNumber</td>
                 <td>@invoice.InvoiceTotal</td>
-                @* <td>@sales.Rate</td> *@
-                @* <td>@sales.Total</td> *@
-                @* <td>@(sales.InvoiceId != null ? sales.InvoiceId : "-")</td> *@
-                @* <td> *@
-                @*   <button class="btn btn-sm btn-primary">Generate Invoice</button> *@
-                @* </td> *@
+                <td>
+                  <a href="#" class="btn btn-primary"
+                     @* id="edit-transaction" *@
+                     @* data-bs-toggle="modal" *@
+                     @* data-bs-target="#editTransactionModal" *@
+                     @* data-id="@sales.SalesTransactionId" *@
+                     @* data-product-id="@sales.ProductId" *@
+                     @* data-customer-id="@sales.CustomerId" *@
+                     @* data-quantity="@sales.Quantity" *@
+                     @* data-rate="@sales.Rate" *@
+                  >View</a>
+                </td>
               </tr>
             }
             </tbody>
@@ -203,7 +213,7 @@
   </div>
   
   
-   <!-- Add SalesTransactions, Product, Customers  -->
+   <!-- Add/Edit form of SalesTransactions, Product, Customers  -->
 
    <div class="modal fade" id="transactionModal" tabindex="-1">
      <div class="modal-dialog">
