@@ -21,11 +21,14 @@ public class SalesController : Controller
         var salesTransactions = await _context.SalesTransactions
                 .Include(s => s.Product)
                 .Include(c=>c.Customer)
+                .Include(i => i.Invoice)
                 .ToListAsync();
         
         var customers = await _context.Customers.ToListAsync();
         var products = await _context.Products.ToListAsync();
-        var invoices = await _context.Invoices.ToListAsync();
+        var invoices = await _context.Invoices
+            .Include(s=>s.Customer)
+            .ToListAsync();
 
         var viewModel = new SalesViewModel
         {

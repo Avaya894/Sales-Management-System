@@ -17,6 +17,46 @@ public class InvoiceController : Controller
         _context = context;
     }
 
+    public IActionResult Index()
+    {
+        return Content("Invoice Page");
+    }
+    
+    // Action to display invoice details including customer, invoice, and sales transactions
+    public async Task<IActionResult> InvoiceDetails(int id)
+    {
+        // Fetch the invoice along with customer details
+        var invoice = await _context.Invoices
+            .Include(i => i.Customer)
+            .Where(i => i.InvoiceId == id)
+            .FirstOrDefaultAsync();
+
+        if (invoice == null)
+        {
+            // Return a not found result if the invoice does not exist
+            return NotFound();
+        }
+
+        // Fetch sales transactions for this invoice and the customer on the same date
+        var invoiceDate = invoice.InvoiceDate;
+        var salesTransactions = await _context.SalesTransactions
+            .Where(st => st.InvoiceId == id)
+            .ToListAsync();
+
+        // Prepare the data for the view
+        var model = new InvoiceDetailsViewModel
+        {
+            InvoiceId = invoice.InvoiceId,
+            CustomerName = invoice.Customer?.CustomerName ?? "Null",
+            InvoiceDate = invoice.InvoiceDate,
+            InvoiceNumber = invoice.InvoiceNumber,
+            InvoiceTotal = invoice.InvoiceTotal,
+            SalesTransactions = salesTransactions
+        };
+
+        return View(model);
+    }
+    
     // Action to create invoices for customers who made sales today
     public async Task<bool> CreateInvoice()
     {

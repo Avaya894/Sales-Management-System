@@ -74,7 +74,7 @@
                 <td>@sales.Quantity</td>
                 <td>@sales.Rate</td>
                 <td>@sales.Total</td>
-                <td>@(sales.InvoiceId != null ? sales.InvoiceId : "-")</td>
+                <td>@(sales.Invoice?.InvoiceId != null ? sales.Invoice.InvoiceNumber : "-")</td>
                 <td>
                   <a href="#" class="btn btn-primary" 
                      id="edit-transaction"
@@ -189,18 +189,12 @@
               <tr>
                 <td>@invoice.InvoiceNumber</td>
                 <td>@invoice.InvoiceDate</td>
-                <td>@invoice.InvoiceNumber</td>
+                <td>@invoice.Customer?.CustomerName</td>
                 <td>@invoice.InvoiceTotal</td>
                 <td>
-                  <a href="#" class="btn btn-primary"
-                     @* id="edit-transaction" *@
-                     @* data-bs-toggle="modal" *@
-                     @* data-bs-target="#editTransactionModal" *@
-                     @* data-id="@sales.SalesTransactionId" *@
-                     @* data-product-id="@sales.ProductId" *@
-                     @* data-customer-id="@sales.CustomerId" *@
-                     @* data-quantity="@sales.Quantity" *@
-                     @* data-rate="@sales.Rate" *@
+                  <a href="@Url.Action("InvoiceDetails", "Invoice", new { id = invoice.InvoiceId })" 
+                     class="btn btn-primary"
+                     target="_blank"
                   >View</a>
                 </td>
               </tr>

@@ -1,0 +1,64 @@
+@model SalesApp.Models.InvoiceDetailsViewModel
+
+@{
+    ViewData["Title"] = "Invoice Details";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Invoice Details</h2>
+
+    <!-- Invoice Header Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <p><strong>Invoice Number:</strong> @Model.InvoiceNumber</p>
+            <p><strong>Customer:</strong> @Model.CustomerName</p>
+        </div>
+        <div class="col-md-6 text-md-right">
+            <p><strong>Invoice Date:</strong> @Model.InvoiceDate.ToString("yyyy-MM-dd")</p>
+            <p><strong>Total Amount:</strong> @Model.InvoiceTotal.ToString("C")</p>
+        </div>
+    </div>
+
+    <!-- Sales Transactions Table -->
+    <h4 class="mb-3">Sales Transactions for @Model.CustomerName on @Model.InvoiceDate.ToString("yyyy-MM-dd")</h4>
+
+    @if (Model.SalesTransactions.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Rate</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Created Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var transaction in Model.SalesTransactions)
+                {
+                    <tr>
+                        <td>@transaction.ProductId</td>
+                        <td>@transaction.Quantity</td>
+                        <td>@transaction.Rate.ToString("C")</td>
+                        <td>@transaction.Total.ToString("C")</td>
+                        <td>@transaction.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-warning" role="alert">
+            No sales transactions found for this invoice.
+        </div>
+    }
+
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+        <a href="@Url.Action(action:"Index", controller:"Sales")" class="btn btn-primary">Back to Sales</a>
+    </div>
+</div>
+
+
