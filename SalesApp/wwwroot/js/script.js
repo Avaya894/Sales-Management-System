@@ -9,7 +9,16 @@ document.getElementById('invoiceLink').addEventListener('click', showInvoicePage
 document.getElementById('saveProduct').addEventListener('click', saveProduct);
 document.getElementById('saveCustomer').addEventListener('click', saveCustomer);
 document.getElementById('saveSalesTransaction').addEventListener('click', saveSalesTransaction);
+document.getElementById('editSalesTransaction').addEventListener('click', editSalesTransaction);
 document.getElementById('transactionProductName').addEventListener('change', setProductRate);
+document.getElementById('editTransactionProductName').addEventListener('change', setEditProductRate);
+
+// Calculate the change in total 
+document.getElementById('transactionProductQuantity').addEventListener('input', calculateSalesTotal);
+document.getElementById('transactionProductRate').addEventListener('input', calculateSalesTotal);
+// Calculate the change in total 
+document.getElementById('editTransactionQuantity').addEventListener('input', calculateEditSalesTotal);
+document.getElementById('editTransactionProductRate').addEventListener('input', calculateEditSalesTotal);
 
 
 document.getElementById('sidebarCollapse').addEventListener('click', function() {
@@ -94,7 +103,18 @@ function saveSalesTransaction() {
   }
 }
 
-function setProductRate() {
+function editSalesTransaction() {
+  console.log("editSalesTransaction save clicked");
+  try{
+    document.getElementById('editTransactionForm').submit();
+    bootstrap.Modal.getInstance(document.getElementById('editTransactionModal')).hide();
+    document.getElementById('editTransactionForm').reset();
+  } catch(err) {
+    console.log(err);
+  }
+}
+
+function setProductRate(id) {
   var selectedOption = this.options[this.selectedIndex]; // Get the selected option
   var rate = selectedOption.getAttribute('data-rate'); // Get the rate from the selected option
   var rateField = document.getElementById('transactionProductRate'); // Get the rate input field
@@ -106,3 +126,51 @@ function setProductRate() {
     rateField.value = ''; // Clear the rate if no product is selected
   }
 }
+
+function setEditProductRate(id) {
+  var selectedOption = this.options[this.selectedIndex]; // Get the selected option
+  var rate = selectedOption.getAttribute('data-rate'); // Get the rate from the selected option
+  var rateField = document.getElementById('editTransactionProductRate'); // Get the rate input field
+
+  // If a product is selected, set the rate in the field, but allow it to be editable
+  if (rate) {
+    rateField.value = rate; // Set the rate
+  } else {
+    rateField.value = ''; // Clear the rate if no product is selected
+  }
+}
+
+function calculateSalesTotal() {
+  var quantity = parseFloat(document.getElementById('transactionProductQuantity').value) || 0;
+  var rate = parseFloat(document.getElementById('transactionProductRate').value) || 0;
+  document.getElementById('transactionTotal').value = quantity * rate;
+}
+
+function calculateEditSalesTotal() {
+  var quantity = parseFloat(document.getElementById('editTransactionQuantity').value) || 0;
+  var rate = parseFloat(document.getElementById('editTransactionProductRate').value) || 0;
+  document.getElementById('editTransactionTotal').value = quantity * rate;
+}
+
+
+
+document.querySelectorAll("#edit-transaction").forEach(button => {
+  button.addEventListener("click", function () {
+    let salesTransactionId = this.getAttribute("data-id");
+    let productId = this.getAttribute("data-product-id");
+    let customerId = this.getAttribute("data-customer-id");
+    let quantity = this.getAttribute("data-quantity");
+    let rate = this.getAttribute("data-rate");
+
+    // Set values in the edit form
+    document.getElementById("editTransactionId").value = salesTransactionId;
+    document.getElementById("editTransactionProductName").value = productId;
+    document.getElementById("customerName").value = customerId;
+    document.getElementById("editTransactionQuantity").value = quantity;
+    document.getElementById("editTransactionProductRate").value = rate;
+    document.getElementById("editTransactionTotal").value = quantity * rate; // Auto-calculate total
+
+    // Trigger change event in case any dependent fields need to be updated
+    document.getElementById("editTransactionProductName").dispatchEvent(new Event("change"));
+  });
+});

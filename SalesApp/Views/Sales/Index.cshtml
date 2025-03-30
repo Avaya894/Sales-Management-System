@@ -76,7 +76,16 @@
                 <td>@sales.Total</td>
                 <td>@(sales.InvoiceId != null ? sales.InvoiceId : "-")</td>
                 <td>
-                  <button class="btn btn-sm btn-primary">Generate Invoice</button>
+                  <a href="#" class="btn btn-primary" 
+                     id="edit-transaction"
+                     data-bs-toggle="modal" 
+                     data-bs-target="#editTransactionModal"
+                     data-id="@sales.SalesTransactionId"
+                     data-product-id="@sales.ProductId"
+                     data-customer-id="@sales.CustomerId"
+                     data-quantity="@sales.Quantity"
+                     data-rate="@sales.Rate"
+                     >Edit</a>
                 </td>
               </tr>
             }
@@ -196,54 +205,113 @@
   
    <!-- Add SalesTransactions, Product, Customers  -->
 
-<div class="modal fade" id="transactionModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add Transaction</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <form asp-controller="Sales" asp-action="Create" method="post" id="transactionForm">
-          <div class="mb-3">
-            <label class="form-label">Product</label>
-            <select class="form-control custom-select" id="transactionProductName" name="ProductId" required>
-              <option value="">Select Product</option>
-              @foreach (var product in Model.Products)
-              {
-                <option value="@product.ProductId" data-rate="@product.Rate">@product.ProductName</option>
-              }
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Customer</label>
-            <select class="form-control custom-select" id="customer" name="CustomerId" required>
-              <option value="">Select Customer</option>
-              @foreach (var customer in Model.Customers)
-              {
-                <option value="@customer.CustomerId">@customer.CustomerName</option>
-              }
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Quantity</label>
-            <input type="number" class="form-control" id="quantity" value="1" name="Quantity" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Rate</label>
-            <input type="number" class="form-control" id="transactionProductRate" name="Rate" required>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="saveSalesTransaction">Save</button>
+   <div class="modal fade" id="transactionModal" tabindex="-1">
+     <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header">
+           <h5 class="modal-title">Add Transaction</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+         </div>
+         <div class="modal-body">
+           <form asp-controller="Sales" asp-action="Create" method="post" id="transactionForm">
+             <div class="mb-3">
+               <label class="form-label">Product</label>
+               <select class="form-control custom-select" id="transactionProductName" name="ProductId" required>
+                 <option value="">Select Product</option>
+                 @foreach (var product in Model.Products)
+                 {
+                   <option value="@product.ProductId" data-rate="@product.Rate">@product.ProductName</option>
+                 }
+               </select>
+             </div>
+             <div class="mb-3">
+               <label class="form-label">Customer</label>
+               <select class="form-control custom-select" id="customer" name="CustomerId" required>
+                 <option value="">Select Customer</option>
+                 @foreach (var customer in Model.Customers)
+                 {
+                   <option value="@customer.CustomerId">@customer.CustomerName</option>
+                 }
+               </select>
+             </div>
+             <div class="mb-3">
+               <label class="form-label">Quantity</label>
+               <input type="number" class="form-control" id="transactionProductQuantity" value="0" name="Quantity" required>
+             </div>
+             <div class="mb-3">
+               <label class="form-label">Rate</label>
+               <input type="number" class="form-control" id="transactionProductRate" name="Rate" required>
+             </div>
+             <div class="mb-3">
+               <label class="form-label">Total</label>
+               <input type="number" class="form-control" id="transactionTotal" name="Total" readonly required>
+             </div>
+           </form>
+         </div>
+         <div class="modal-footer">
+           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+           <button type="button" class="btn btn-primary" id="saveSalesTransaction">Save</button>
+         </div>
+       </div>
+     </div>
+   </div>
+
+  <div class="modal fade" id="editTransactionModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Transaction</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form asp-controller="Sales" asp-action="Edit" method="post" id="editTransactionForm">
+            <div class="mb-3">
+              <label class="form-label">SalesTransactionID</label>
+              <input type="text" class="form-control" id="editTransactionId" name="SalesTransactionId" readonly required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Product</label>
+              <select class="form-control custom-select" id="editTransactionProductName" name="ProductId" required>
+                <option value="">Select Product</option>
+                @foreach (var product in Model.Products)
+                {
+                  <option value="@product.ProductId" data-rate="@product.Rate">@product.ProductName</option>
+                }
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Customer</label>
+              <select class="form-control custom-select" id="customerName" name="CustomerId" required>
+                <option value="">Select Customer</option>
+                @foreach (var customer in Model.Customers)
+                {
+                  <option value="@customer.CustomerId">@customer.CustomerName</option>
+                }
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Quantity</label>
+              <input type="number" class="form-control" id="editTransactionQuantity" value="0" name="Quantity" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Rate</label>
+              <input type="number" class="form-control" id="editTransactionProductRate" name="Rate" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Total</label>
+              <input type="number" class="form-control" id="editTransactionTotal" name="Total" readonly required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="editSalesTransaction">Edit</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-<div class="modal fade" id="productModal" tabindex="-1">
+  
+  <div class="modal fade" id="productModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
