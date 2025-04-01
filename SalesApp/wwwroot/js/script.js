@@ -5,6 +5,7 @@ let invoices = [];
 document.getElementById('salesLink').addEventListener('click', showSalesPage);
 document.getElementById('productLink').addEventListener('click', showProductPage);
 document.getElementById('customerLink').addEventListener('click', showCustomerPage);
+document.getElementById('generateInvoiceLink').addEventListener('click', showGenerateInvoicePage);
 document.getElementById('invoiceLink').addEventListener('click', showInvoicePage);
 document.getElementById('saveProduct').addEventListener('click', saveProduct);
 document.getElementById('saveCustomer').addEventListener('click', saveCustomer);
@@ -29,10 +30,12 @@ function showSalesPage() {
   document.getElementById('salesPage').style.display = 'block';
   document.getElementById('productPage').style.display = 'none';
   document.getElementById('customerPage').style.display = 'none';
+  document.getElementById('generateInvoicePage').style.display = 'none';
   document.getElementById('invoicePage').style.display = 'none';
   document.getElementById('salesLink').classList.add('active');
   document.getElementById('productLink').classList.remove('active');
   document.getElementById('customerLink').classList.remove('active');
+  document.getElementById('generateInvoiceLink').classList.remove('active');
   document.getElementById('invoiceLink').classList.remove('active');
   
 }
@@ -42,9 +45,11 @@ function showProductPage() {
   document.getElementById('productPage').style.display = 'block';
   document.getElementById('customerPage').style.display = 'none';
   document.getElementById('invoicePage').style.display = 'none';
+  document.getElementById('generateInvoicePage').style.display = 'none';
   document.getElementById('salesLink').classList.remove('active');
   document.getElementById('productLink').classList.add('active');
   document.getElementById('customerLink').classList.remove('active');
+  document.getElementById('generateInvoiceLink').classList.remove('active');
   document.getElementById('invoiceLink').classList.remove('active');
 
 }
@@ -53,12 +58,28 @@ function showCustomerPage() {
   document.getElementById('salesPage').style.display = 'none';
   document.getElementById('productPage').style.display = 'none';
   document.getElementById('customerPage').style.display = 'block';
+  document.getElementById('generateInvoicePage').style.display = 'none';
   document.getElementById('invoicePage').style.display = 'none';
   document.getElementById('salesLink').classList.remove('active');
   document.getElementById('productLink').classList.remove('active');
   document.getElementById('customerLink').classList.add('active');
+  document.getElementById('generateInvoiceLink').classList.remove('active');
   document.getElementById('invoiceLink').classList.remove('active');
 
+}
+
+function showGenerateInvoicePage() {
+  console.log("Invoice Page clicked");
+  document.getElementById('salesPage').style.display = 'none';
+  document.getElementById('productPage').style.display = 'none';
+  document.getElementById('customerPage').style.display = 'none';
+  document.getElementById('generateInvoicePage').style.display = 'block';
+  document.getElementById('invoicePage').style.display = 'none';
+  document.getElementById('salesLink').classList.remove('active');
+  document.getElementById('productLink').classList.remove('active');
+  document.getElementById('customerLink').classList.remove('active');
+  document.getElementById('generateInvoiceLink').classList.add('active');
+  document.getElementById('invoiceLink').classList.remove('active');
 }
 
 function showInvoicePage() {
@@ -66,10 +87,12 @@ function showInvoicePage() {
   document.getElementById('salesPage').style.display = 'none';
   document.getElementById('productPage').style.display = 'none';
   document.getElementById('customerPage').style.display = 'none';
+  document.getElementById('generateInvoicePage').style.display = 'none';
   document.getElementById('invoicePage').style.display = 'block';
   document.getElementById('salesLink').classList.remove('active');
   document.getElementById('productLink').classList.remove('active');
   document.getElementById('customerLink').classList.remove('active');
+  document.getElementById('generateInvoiceLink').classList.remove('active');
   document.getElementById('invoiceLink').classList.add('active');
 }
 

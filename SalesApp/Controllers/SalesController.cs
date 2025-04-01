@@ -22,20 +22,37 @@ public class SalesController : Controller
                 .Include(s => s.Product)
                 .Include(c=>c.Customer)
                 .Include(i => i.Invoice)
+                .OrderByDescending(s => s.CreatedDate)
                 .ToListAsync();
         
         var customers = await _context.Customers.ToListAsync();
         var products = await _context.Products.ToListAsync();
         var invoices = await _context.Invoices
             .Include(s=>s.Customer)
+            .OrderByDescending(s => s.InvoiceDate)
             .ToListAsync();
-
+        
+        
+        var today = DateTime.UtcNow.Date;
+        var generateInvoices = await _context.Customers
+            .Where(c => c.SalesTransactions != null && 
+                        c.SalesTransactions!.Any(st => 
+                            st.CreatedDate.Date == today && 
+                            st.InvoiceId == null))
+            .Include(c => c.SalesTransactions
+                .Where(st => st.CreatedDate.Date == today && st.InvoiceId == null))
+            .ToListAsync();
+        
+        // var generateInvoices = await _context.Customers
+        //     .ToListAsync();
+        
         var viewModel = new SalesViewModel
         {
             SalesTransactions = salesTransactions,
             Customers = customers,
             Products = products,
-            Invoices = invoices
+            Invoices = invoices,
+            GenerateInvoices = generateInvoices
         };
         
         return View(viewModel); 
@@ -78,7 +95,8 @@ public class SalesController : Controller
             existingTransaction.Quantity = salesTransaction.Quantity;
             existingTransaction.Rate = salesTransaction.Rate;
             existingTransaction.Total = salesTransaction.Total;
-
+            existingTransaction.EditedDate = DateTime.UtcNow;
+            
             
             // _context.SalesTransactions.Update(salesTransaction);
             await _context.SaveChangesAsync();

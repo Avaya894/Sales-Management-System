@@ -40,6 +40,7 @@ public class InvoiceController : Controller
         // Fetch sales transactions for this invoice and the customer on the same date
         var invoiceDate = invoice.InvoiceDate;
         var salesTransactions = await _context.SalesTransactions
+            .Include(st => st.Product)
             .Where(st => st.InvoiceId == id)
             .ToListAsync();
 
@@ -57,8 +58,40 @@ public class InvoiceController : Controller
         return View(model);
     }
     
+    public async Task<bool> CreateInvoiceForCustomer(int id)
+    {
+        var today = DateTime.UtcNow.Date;
+
+        // Calculate the total sales for the customer today
+        var totalSales = await _context.SalesTransactions
+            .Where(st => st.CustomerId == id && st.CreatedDate.Date == today && st.Invoice == null)
+            .SumAsync(st => st.Total);
+
+        if (totalSales == 0)
+        {
+            return false; // No sales found for this customer today, so no invoice needed
+        }
+
+        // Generate a unique invoice number
+        var invoiceNumber = $"INV-{id}-{DateTime.UtcNow:yyyyMMddHHmm}";
+
+        var invoice = new Invoice
+        {
+            CustomerId = id,
+            InvoiceDate = today,
+            InvoiceNumber = invoiceNumber,
+            InvoiceTotal = totalSales
+        };
+
+        _context.Invoices.Add(invoice);
+        await _context.SaveChangesAsync(); 
+
+        return true; // Invoice successfully created
+    }
+
+    
     // Action to create invoices for customers who made sales today
-    public async Task<bool> CreateInvoice()
+    public async Task<bool> CreateInvoiceForAllCustomer()
     {
         var today = DateTime.UtcNow.Date;
 
@@ -68,11 +101,12 @@ public class InvoiceController : Controller
             .Select(st => st.CustomerId)
             .Distinct()
             .ToListAsync();
-
+            
+            
         foreach (var customerId in customerIds)
         {
             // Generate a unique invoice number (Customize logic as needed)
-            var invoiceNumber = $"INV-{customerId}-{DateTime.UtcNow.Ticks}";
+            var invoiceNumber = $"INV-{customerId}-{DateTime.UtcNow:yyyyMMddHHmm}";
 
             var invoice = new Invoice
             {
@@ -94,7 +128,7 @@ public class InvoiceController : Controller
     
 
     // Action to tag invoices to sales transactions
-    public async Task<bool> UpdateInvoice()
+    public async Task<bool> UpdateInvoiceForAllCustomer()
     {
         var today = DateTime.UtcNow.Date;
 
@@ -121,10 +155,32 @@ public class InvoiceController : Controller
         return true;
     }
     
-    public async Task<IActionResult> GenerateAndTagInvoices()
+    public async Task<IActionResult> GenerateAndTagEachInvoices(int id)
     {
         // Step 1: Create invoices
-        var invoiceCreationSuccess = await CreateInvoice();
+        var invoiceCreationSuccess = await CreateInvoiceForCustomer(id);
+        if (!invoiceCreationSuccess)
+        {
+            // Handle failure if needed (logging, error message)
+            return RedirectToAction("Error", "Home"); // Or any error handling page
+        }
+
+        // // Step 2: Update Sales Transactions
+        var invoiceUpdateSuccess = await UpdateInvoiceForAllCustomer();
+        if (!invoiceUpdateSuccess)
+        {
+            // Handle failure if needed
+            return RedirectToAction("Error", "Home"); // Or any error handling page
+        }
+        
+        // // After both actions are successful, redirect to Sale/Index
+        return RedirectToAction("Index", "Sales");
+    }
+    
+    public async Task<IActionResult> GenerateAndTagAllInvoices()
+    {
+        // Step 1: Create invoices
+        var invoiceCreationSuccess = await CreateInvoiceForAllCustomer();
         if (!invoiceCreationSuccess)
         {
             // Handle failure if needed (logging, error message)
@@ -132,7 +188,7 @@ public class InvoiceController : Controller
         }
 
         // Step 2: Update Sales Transactions
-        var invoiceUpdateSuccess = await UpdateInvoice();
+        var invoiceUpdateSuccess = await UpdateInvoiceForAllCustomer();
         if (!invoiceUpdateSuccess)
         {
             // Handle failure if needed

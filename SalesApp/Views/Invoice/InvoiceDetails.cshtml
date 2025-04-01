@@ -15,7 +15,7 @@
         </div>
         <div class="col-md-6 text-md-right">
             <p><strong>Invoice Date:</strong> @Model.InvoiceDate.ToString("yyyy-MM-dd")</p>
-            <p><strong>Total Amount:</strong> @Model.InvoiceTotal.ToString("C")</p>
+            <p><strong>Total Amount:</strong> @Model.InvoiceTotal</p>
         </div>
     </div>
 
@@ -38,11 +38,11 @@
                 @foreach (var transaction in Model.SalesTransactions)
                 {
                     <tr>
-                        <td>@transaction.ProductId</td>
+                        <td>@transaction.Product?.ProductName</td>
                         <td>@transaction.Quantity</td>
                         <td>@transaction.Rate.ToString("C")</td>
                         <td>@transaction.Total.ToString("C")</td>
-                        <td>@transaction.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@transaction.CreatedDate.ToString("yyyy-MM-dd")</td>
                     </tr>
                 }
             </tbody>

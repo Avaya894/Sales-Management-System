@@ -27,6 +27,11 @@
           </a>
         </li>
         <li>
+          <a href="#" id="generateInvoiceLink" class="nav-link">
+            <i class="bi bi-receipt"></i> Generate Invoice
+          </a>
+        </li>
+        <li>
           <a href="#" id="invoiceLink" class="nav-link">
             <i class="bi bi-receipt"></i> Invoices
           </a>
@@ -55,6 +60,7 @@
           <table class="table table-striped">
             <thead>
             <tr>
+              <th>Date</th>
               <th>Product</th>
               <th>Customer</th>
               <th>Quantity</th>
@@ -69,6 +75,7 @@
             @foreach (var sales in Model.SalesTransactions)
             {
               <tr>
+                <td>@sales.CreatedDate.ToString("yyyy-MM-dd")</td>
                 <td>@sales.Product?.ProductName</td>
                 <td>@sales.Customer?.CustomerName</td>
                 <td>@sales.Quantity</td>
@@ -166,12 +173,46 @@
       
       </div>
 
+      <div id="generateInvoicePage" style="display: none;">
+        <div class="d-flex justify-content-between mb-3">
+          <h2>Generate Invoice</h2>
+          <form asp-controller="Invoice" asp-action="GenerateAndTagAllInvoices" method="post">
+            <button type="submit" class="btn btn-primary">Generate All Daily Invoices</button>
+          </form>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>CustomerID</th>
+              <th>CustomerName</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @foreach (var customer in Model.GenerateInvoices)
+            {
+              <tr>
+                <td>@customer.CustomerId</td>
+                <td>@customer.CustomerName</td>
+                <td><a href="@Url.Action("GenerateAndTagEachInvoices", "Invoice", new { id = customer.CustomerId })"
+                       class="btn btn-primary"
+                       target="_blank"
+                  >Generate</a>
+                </td>
+              </tr>
+            }
+            </tbody>
+          </table>
+        </div>
+
+
+      </div>
+      
       <div id="invoicePage" style="display: none;">
         <h2>Invoices</h2>
-        <form asp-controller="Invoice" asp-action="GenerateAndTagInvoices" method="post">
-          <button type="submit" class="btn btn-primary">Generate Daily Invoices</button>
-        </form>
-
+        
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
@@ -188,7 +229,7 @@
             {
               <tr>
                 <td>@invoice.InvoiceNumber</td>
-                <td>@invoice.InvoiceDate</td>
+                <td>@invoice.InvoiceDate.ToString("yyyy-MM-dd")</td>
                 <td>@invoice.Customer?.CustomerName</td>
                 <td>@invoice.InvoiceTotal</td>
                 <td>
