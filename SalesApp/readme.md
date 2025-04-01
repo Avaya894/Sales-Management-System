@@ -115,11 +115,11 @@ dotnet ef database update
 
 Screenshots of different application pages:
 
-1. **Sales Transaction Listing Page** – Lists all sales transactions with details.
+1. **Sales Transaction Listing Page** – Lists all sales transactions.
    [![list-Sales-Page.png](https://i.postimg.cc/k5JjC1n3/list-Sales-Page.png)](https://postimg.cc/w1r5cky0)
 2. **Add Sales Transaction Page** – Form to create a new sales transaction.
 [![add-Sales-Page.png](https://i.postimg.cc/23N1dW1r/add-Sales-Page.png)](https://postimg.cc/dZnQwLRx)
-3. **Edit Sales Transaction Page** – Interface to modify a sales transaction.
+3. **Edit Sales Transaction Page** – Form to modify a sales transaction.
    [![edit-Sales-Page.png](https://i.postimg.cc/2jMXW7xh/edit-Sales-Page.png)](https://postimg.cc/vD7zF9kZ)
 4. **Product Listing & Creation Page** – Displays and manages products.
    [![productpage.png](https://i.postimg.cc/T3qkZMvJ/productpage.png)](https://postimg.cc/LJ5B1WXJ)
