@@ -22,7 +22,7 @@ public class InvoiceController : Controller
         return Content("Invoice Page");
     }
     
-    // Action to display invoice details including customer, invoice, and sales transactions
+    // Display invoice details  
     public async Task<IActionResult> InvoiceDetails(int id)
     {
         // Fetch the invoice along with customer details
@@ -62,19 +62,21 @@ public class InvoiceController : Controller
     {
         var today = DateTime.UtcNow.Date;
 
-        // Calculate the total sales for the customer today
+        // Calculate the total sales 
         var totalSales = await _context.SalesTransactions
             .Where(st => st.CustomerId == id && st.CreatedDate.Date == today && st.Invoice == null)
             .SumAsync(st => st.Total);
 
         if (totalSales == 0)
         {
-            return false; // No sales found for this customer today, so no invoice needed
+            // No sales found for this customer today, so no invoice needed
+            return false; 
         }
 
         // Generate a unique invoice number
         var invoiceNumber = $"INV-{id}-{DateTime.UtcNow:yyyyMMddHHmm}";
 
+        // Create Invoice
         var invoice = new Invoice
         {
             CustomerId = id,
@@ -86,11 +88,12 @@ public class InvoiceController : Controller
         _context.Invoices.Add(invoice);
         await _context.SaveChangesAsync(); 
 
-        return true; // Invoice successfully created
+        // Invoice successfully created
+        return true; 
     }
 
     
-    // Action to create invoices for customers who made sales today
+    // Create invoices for all customers 
     public async Task<bool> CreateInvoiceForAllCustomer()
     {
         var today = DateTime.UtcNow.Date;
@@ -127,7 +130,7 @@ public class InvoiceController : Controller
     }
     
 
-    // Action to tag invoices to sales transactions
+    // Tag invoices to all the sales transactions 
     public async Task<bool> UpdateInvoiceForAllCustomer()
     {
         var today = DateTime.UtcNow.Date;
@@ -155,47 +158,48 @@ public class InvoiceController : Controller
         return true;
     }
     
+    
+    // Create Invoice and Tag invoice to SalesTransaction
     public async Task<IActionResult> GenerateAndTagEachInvoices(int id)
     {
-        // Step 1: Create invoices
+        // Create invoices
         var invoiceCreationSuccess = await CreateInvoiceForCustomer(id);
         if (!invoiceCreationSuccess)
         {
-            // Handle failure if needed (logging, error message)
-            return RedirectToAction("Error", "Home"); // Or any error handling page
+            return RedirectToAction("Error", "Home"); 
         }
 
-        // // Step 2: Update Sales Transactions
+        // Update Sales Transactions
         var invoiceUpdateSuccess = await UpdateInvoiceForAllCustomer();
         if (!invoiceUpdateSuccess)
         {
             // Handle failure if needed
-            return RedirectToAction("Error", "Home"); // Or any error handling page
+            return RedirectToAction("Error", "Home"); 
         }
         
-        // // After both actions are successful, redirect to Sale/Index
+        // Redirect to Sale/Index
         return RedirectToAction("Index", "Sales");
     }
     
     public async Task<IActionResult> GenerateAndTagAllInvoices()
     {
-        // Step 1: Create invoices
+        // Create invoices
         var invoiceCreationSuccess = await CreateInvoiceForAllCustomer();
         if (!invoiceCreationSuccess)
         {
-            // Handle failure if needed (logging, error message)
-            return RedirectToAction("Error", "Home"); // Or any error handling page
+            // Handle failure if needed 
+            return RedirectToAction("Error", "Home"); 
         }
 
-        // Step 2: Update Sales Transactions
+        // Update Sales Transactions
         var invoiceUpdateSuccess = await UpdateInvoiceForAllCustomer();
         if (!invoiceUpdateSuccess)
         {
             // Handle failure if needed
-            return RedirectToAction("Error", "Home"); // Or any error handling page
+            return RedirectToAction("Error", "Home"); 
         }
 
-        // After both actions are successful, redirect to Sale/Index
+        // Redirect to Sale/Index
         return RedirectToAction("Index", "Sales");
     }
 

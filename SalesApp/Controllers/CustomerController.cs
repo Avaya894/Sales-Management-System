@@ -19,6 +19,7 @@ public class CustomerController : Controller
         return Content("Index");
     }
     
+    // Creates new customer (handles post request)
     [HttpPost]
     public async Task<IActionResult> Create([Bind("CustomerName, ContactInfo")] Customer customer)
     {

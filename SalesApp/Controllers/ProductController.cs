@@ -6,7 +6,6 @@ namespace SalesApp.Controllers;
 
 public class ProductController : Controller
 {
-    // GET
     private readonly SalesContext _context;
     
     public ProductController(SalesContext context)
@@ -14,6 +13,7 @@ public class ProductController : Controller
         _context = context;
     }
     
+    // Create new Product (handles POST request)
     [HttpPost]
     public async Task<IActionResult> Create([Bind("ProductName, Rate")]Product product)
     {

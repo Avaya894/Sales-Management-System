@@ -16,8 +16,10 @@ public class SalesController : Controller
         _context = context;
     }
 
+    // Index (Displays the list of sales transactions, customers, products, and invoices)
     public async Task<IActionResult> Index()
     { 
+        // Fetch sales transactions with related Product, Customer, and Invoice details.
         var salesTransactions = await _context.SalesTransactions
                 .Include(s => s.Product)
                 .Include(c=>c.Customer)
@@ -25,15 +27,22 @@ public class SalesController : Controller
                 .OrderByDescending(s => s.CreatedDate)
                 .ToListAsync();
         
+        // Fetch all customers
         var customers = await _context.Customers.ToListAsync();
+        
+        // Fetch all products
         var products = await _context.Products.ToListAsync();
+        
+        // Fetch invoices, including related customer details, sorted by invoice date (descending)
         var invoices = await _context.Invoices
             .Include(s=>s.Customer)
             .OrderByDescending(s => s.InvoiceDate)
             .ToListAsync();
         
-        
+        // Get today's date (UTC)
         var today = DateTime.UtcNow.Date;
+        
+        // Fetch customers who have transactions today but haven't been invoiced yet
         var generateInvoices = await _context.Customers
             .Where(c => c.SalesTransactions != null && 
                         c.SalesTransactions!.Any(st => 
@@ -43,9 +52,7 @@ public class SalesController : Controller
                 .Where(st => st.CreatedDate.Date == today && st.InvoiceId == null))
             .ToListAsync();
         
-        // var generateInvoices = await _context.Customers
-        //     .ToListAsync();
-        
+        // ViewModel to pass data to the view
         var viewModel = new SalesViewModel
         {
             SalesTransactions = salesTransactions,
@@ -58,13 +65,14 @@ public class SalesController : Controller
         return View(viewModel); 
     }
     
+    
+    // Handles the creation of a new sales transaction.
     [HttpPost]
     public async Task<IActionResult> Create([Bind("ProductId, CustomerId, Quantity, Rate, Total")]SalesTransaction salesTransaction)
     {
         if (ModelState.IsValid)
         {
-            Console.WriteLine($"ProductId: {salesTransaction.ProductId}, CustomerId: {salesTransaction.CustomerId}, Quantity: {salesTransaction.Quantity}, Rate: {salesTransaction.Rate}, Total: {salesTransaction.Total}");
-            Console.Write("Create saleTransaction pressed");
+            // Add the new sales transaction to the database
             _context.SalesTransactions.Add(salesTransaction);
             await _context.SaveChangesAsync();
             TempData["Message"] = "Sales created successfully!";
@@ -72,15 +80,16 @@ public class SalesController : Controller
         return RedirectToAction("Index", "Sales");
     }
     
+    
+    // Handles editing an existing sales transaction
     [HttpPost]
     public async Task<IActionResult> Edit([Bind("SalesTransactionId, ProductId, CustomerId, Quantity, Rate, Total")]SalesTransaction salesTransaction)
     {
         if (ModelState.IsValid)
         {
-            Console.WriteLine($"ProductId: {salesTransaction.ProductId}, CustomerId: {salesTransaction.CustomerId}, Quantity: {salesTransaction.Quantity}, Rate: {salesTransaction.Rate}, Total: {salesTransaction.Total}");
-            Console.Write("update saleTransaction pressed");
-            
+            // Retrieve the existing sales transaction from the database
             var existingTransaction = await _context.SalesTransactions.FindAsync(salesTransaction.SalesTransactionId);
+            
             
             if (existingTransaction == null)
             {
@@ -88,8 +97,7 @@ public class SalesController : Controller
                 return RedirectToAction("Index", "Sales");
             }
             
-            Console.WriteLine($"Existing salesTransaction: {existingTransaction.ProductId}");
-            
+            // Update the existing transaction's details
             existingTransaction.ProductId = salesTransaction.ProductId;
             existingTransaction.CustomerId = salesTransaction.CustomerId;
             existingTransaction.Quantity = salesTransaction.Quantity;
@@ -98,7 +106,7 @@ public class SalesController : Controller
             existingTransaction.EditedDate = DateTime.UtcNow;
             
             
-            // _context.SalesTransactions.Update(salesTransaction);
+            // Save changes to the database
             await _context.SaveChangesAsync();
             TempData["Message"] = "Sales Updated successfully!";
         }
