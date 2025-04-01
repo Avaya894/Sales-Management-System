@@ -22,10 +22,6 @@ document.getElementById('editTransactionQuantity').addEventListener('input', cal
 document.getElementById('editTransactionProductRate').addEventListener('input', calculateEditSalesTotal);
 
 
-document.getElementById('sidebarCollapse').addEventListener('click', function() {
-  document.getElementById('sidebar').classList.toggle('active');
-});
-
 function showSalesPage() {
   document.getElementById('salesPage').style.display = 'block';
   document.getElementById('productPage').style.display = 'none';
